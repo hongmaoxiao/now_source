@@ -10,12 +10,11 @@ func init() {
 }
 
 type Now struct {
-	time   time.Time
-	format string
+	time.Time
 }
 
 func New(t time.Time) *Now {
-	return &Now{time: t}
+	return &Now{t}
 }
 
 func BeginningOfMinute() time.Time {

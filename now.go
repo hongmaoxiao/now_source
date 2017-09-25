@@ -103,7 +103,7 @@ func parseWithFormat(str string) (t time.Time, err error) {
 			return
 		}
 	}
-	err = errors.New("Can't parse string as time: " + str)
+	err = errors.New("Can't parse string: " + str)
 	return
 }
 
@@ -149,7 +149,7 @@ func (now *Now) Parse(strs ...string) (t time.Time, err error) {
 		if len(parseTime) > 0 {
 			fmt.Println("parseTime llll", parseTime)
 			t = time.Date(parseTime[5], time.Month(parseTime[4]), parseTime[3], parseTime[2], parseTime[1], parseTime[0], 0, currentLocation)
-			currentTime := []int{t.Second(), t.Minute(), t.Hour(), t.Day(), int(t.Month()), t.Year()}
+			currentTime = []int{t.Second(), t.Minute(), t.Hour(), t.Day(), int(t.Month()), t.Year()}
 			fmt.Println("parseTime t", t)
 		}
 	}

@@ -2,6 +2,7 @@ package now
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"time"
 )
@@ -106,43 +107,57 @@ func parseWithFormat(str string) (t time.Time, err error) {
 	return
 }
 
-func (now *Now) Parse(str string) (t time.Time, err error) {
-
+func (now *Now) Parse(strs ...string) (t time.Time, err error) {
+	var setCurrentTime bool
 	parseTime := []int{}
 	currentTime := []int{now.Second(), now.Minute(), now.Hour(), now.Day(), int(now.Month()), now.Year()}
 	currentLocation := now.Location()
-	hasDate := regexp.MustCompile(`-\d`).MatchString(str)
 
-	t, err = parseWithFormat(str)
-	if err == nil {
-		parseTime := []int{t.Second(), t.Minute(), t.Hour(), t.Day(), int(t.Month()), t.Year()}
+	for _, str := range strs {
+		hasDate := regexp.MustCompile(`-\d`).MatchString(str)
+		t, err = parseWithFormat(str)
+		if err == nil {
+			fmt.Println("t", t)
+			parseTime = []int{t.Second(), t.Minute(), t.Hour(), t.Day(), int(t.Month()), t.Year()}
 
-		var setCurrentTime bool
-		for i, v := range parseTime {
-			// Fill up missed information with current time
-			if v == 0 {
-				if setCurrentTime {
-					parseTime[i] = currentTime[i]
+			fmt.Println("parseTime", parseTime)
+			fmt.Println("currentTime", currentTime)
+			for i, v := range parseTime {
+				// Fill up missed information with current time
+				if v == 0 {
+					fmt.Println("parseTime[i]", parseTime[i])
+					fmt.Println("currentTime", currentTime[i])
+					if setCurrentTime {
+						parseTime[i] = currentTime[i]
+						fmt.Println("after parseTime[i]", parseTime[i])
+						fmt.Println("after currentTime[i]", currentTime[i])
+					}
+				} else {
+					setCurrentTime = true
 				}
-			} else {
-				setCurrentTime = true
-			}
 
-			// Default day and month is 1, fill up it if missing it
-			if (i == 3 || i == 4) && !hasDate {
-				parseTime[i] = currentTime[i]
+				// Default day and month is 1, fill up it if missing it
+				if (i == 3 || i == 4) && !hasDate {
+					parseTime[i] = currentTime[i]
+					fmt.Println("after day parseTime[i]", parseTime[i])
+					fmt.Println("after day currentTime[i]", currentTime[i])
+				}
 			}
 		}
-	}
 
-	if len(parseTime) > 0 {
-		t = time.Date(parseTime[5], time.Month(parseTime[4]), parseTime[3], parseTime[2], parseTime[1], parseTime[0], 0, currentLocation)
+		fmt.Println("parseTime llll", parseTime)
+		if len(parseTime) > 0 {
+			fmt.Println("parseTime llll", parseTime)
+			t = time.Date(parseTime[5], time.Month(parseTime[4]), parseTime[3], parseTime[2], parseTime[1], parseTime[0], 0, currentLocation)
+			currentTime := []int{t.Second(), t.Minute(), t.Hour(), t.Day(), int(t.Month()), t.Year()}
+			fmt.Println("parseTime t", t)
+		}
 	}
 	return
 }
 
-func (now *Now) MustParse(str string) (t time.Time) {
-	t, err := now.Parse(str)
+func (now *Now) MustParse(strs ...string) (t time.Time) {
+	t, err := now.Parse(strs...)
 	if err != nil {
 		panic(err)
 	}

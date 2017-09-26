@@ -96,7 +96,7 @@ func (now *Now) EndOfSunday() time.Time {
 }
 
 func parseWithFormat(str string) (t time.Time, err error) {
-	formats := []string{"2006-01-02 15:04:05", "2006-01-02 15:04", "2006-01-02", "01-02", "15:04:05", "15:04", "15"}
+	formats := []string{"2006-1-2 15:4:5", "2006-1-2 15:4", "2006-1-2", "1-2", "15:4:5", "15:4", "15"}
 	for _, format := range formats {
 		t, err = time.Parse(format, str)
 		if err == nil {
@@ -136,11 +136,12 @@ func (now *Now) Parse(strs ...string) (t time.Time, err error) {
 					setCurrentTime = true
 				}
 
+				fmt.Println("after first parseTime[i]", parseTime[i])
 				// Default day and month is 1, fill up it if missing it
 				if (i == 3 || i == 4) && !hasDate {
 					parseTime[i] = currentTime[i]
-					fmt.Println("after day parseTime[i]", parseTime[i])
-					fmt.Println("after day currentTime[i]", currentTime[i])
+					fmt.Println("after day parseTime[i]", i, parseTime[i])
+					fmt.Println("after day currentTime[i]", i, currentTime[i])
 				}
 			}
 		}
@@ -151,6 +152,8 @@ func (now *Now) Parse(strs ...string) (t time.Time, err error) {
 			t = time.Date(parseTime[5], time.Month(parseTime[4]), parseTime[3], parseTime[2], parseTime[1], parseTime[0], 0, currentLocation)
 			currentTime = []int{t.Second(), t.Minute(), t.Hour(), t.Day(), int(t.Month()), t.Year()}
 			fmt.Println("parseTime t", t)
+			fmt.Println("last currentTime: ", currentTime)
+			fmt.Println()
 		}
 	}
 	return

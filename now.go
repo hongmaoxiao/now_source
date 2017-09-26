@@ -102,7 +102,7 @@ func parseWithFormat(str string) (t time.Time, err error) {
 			return
 		}
 	}
-	err = errors.New("Can't parse string: " + str)
+	err = errors.New("Can't parse string as time: " + str)
 	return
 }
 
@@ -113,7 +113,7 @@ func (now *Now) Parse(strs ...string) (t time.Time, err error) {
 	currentLocation := now.Location()
 
 	for _, str := range strs {
-		hasDate := regexp.MustCompile(`-\d`).MatchString(str)
+		hasDate := regexp.MustCompile(`^\s*\d+(:\d+)*\s*$`).MatchString(str)
 		t, err = parseWithFormat(str)
 		if err == nil {
 			fmt.Println("t", t)
@@ -137,7 +137,7 @@ func (now *Now) Parse(strs ...string) (t time.Time, err error) {
 
 				fmt.Println("after first parseTime[i]", parseTime[i])
 				// Default day and month is 1, fill up it if missing it
-				if (i == 3 || i == 4) && !hasDate {
+				if (i == 3 || i == 4) && onlyTime {
 					parseTime[i] = currentTime[i]
 					fmt.Println("after day parseTime[i]", i, parseTime[i])
 					fmt.Println("after day currentTime[i]", i, currentTime[i])

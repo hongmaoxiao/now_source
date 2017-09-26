@@ -41,9 +41,9 @@ func (now *Now) BeginningOfMonth() time.Time {
 }
 
 func (now *Now) BeginningOfQuarter() time.Time {
-	t := now.BeginningOfMonth()
-	offset := (int(t.Month()) - 1) % 3
-	return t.AddDate(0, -offset, 0)
+	month := now.BeginningOfMonth()
+	offset := (int(month.Month()) - 1) % 3
+	return month.AddDate(0, -offset, 0)
 }
 
 func (now *Now) BeginningOfYear() time.Time {
@@ -139,6 +139,7 @@ func (now *Now) Parse(strs ...string) (t time.Time, err error) {
 			fmt.Println("currentTime", currentTime)
 			for i, v := range parseTime {
 				// Don't reset hour, minute, second if it is a time only string
+				fmt.Println("onlyTime: ", onlyTime)
 				if onlyTime && i <= 2 {
 					continue
 				}

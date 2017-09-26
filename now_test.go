@@ -1,6 +1,7 @@
 package now
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -19,6 +20,13 @@ func TestBeginningOf(t *testing.T) {
 	}
 
 	if New(n).BeginningOfDay().Format(format) != "2013-11-18 00:00:00" {
+		t.Errorf("BeginningOfDay")
+	}
+
+	location, _ := time.LoadLocation("Japan")
+	beginningOfDay := time.Date(2015, 05, 01, 0, 0, 0, 0, location)
+	fmt.Println("beee: ", beginningOfDay)
+	if New(beginningOfDay).BeginningOfDay().Format(format) != "2015-05-01 00:00:00" {
 		t.Errorf("BeginningOfDay")
 	}
 

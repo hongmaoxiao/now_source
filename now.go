@@ -2,7 +2,6 @@ package now
 
 import (
 	"errors"
-	"fmt"
 	"regexp"
 	"time"
 )
@@ -124,6 +123,7 @@ func (now *Now) Parse(strs ...string) (t time.Time, err error) {
 
 	for _, str := range strs {
 		onlyTime := regexp.MustCompile(`^\s*\d+(:\d+)*\s*$`).MatchString(str) // match 15:04:05, 15
+
 		t, err = parseWithFormat(str)
 		location := t.Location()
 		if location.String() == "UTC" {
@@ -131,53 +131,37 @@ func (now *Now) Parse(strs ...string) (t time.Time, err error) {
 		}
 
 		if err == nil {
-			fmt.Println("t", t)
 			parseTime = []int{t.Second(), t.Minute(), t.Hour(), t.Day(), int(t.Month()), t.Year()}
 			onlyTime = onlyTime && (parseTime[3] == 1) && (parseTime[4] == 1)
 
-			fmt.Println("parseTime", parseTime)
-			fmt.Println("currentTime", currentTime)
 			for i, v := range parseTime {
 				// Don't reset hour, minute, second if it is a time only string
-				fmt.Println("onlyTime: ", onlyTime)
 				if onlyTime && i <= 2 {
 					continue
 				}
 
 				// Fill up missed information with current time
 				if v == 0 {
-					fmt.Println("parseTime[i]", parseTime[i])
-					fmt.Println("currentTime", currentTime[i])
 					if setCurrentTime {
 						parseTime[i] = currentTime[i]
-						fmt.Println("after parseTime[i]", parseTime[i])
-						fmt.Println("after currentTime[i]", currentTime[i])
 					}
 				} else {
 					setCurrentTime = true
 				}
 
-				fmt.Println("after first parseTime[i]", parseTime[i])
 				// Default day and month is 1, fill up it if missing it
 				if onlyTime {
 					if i == 3 || i == 4 {
 						parseTime[i] = currentTime[i]
-						fmt.Println("after day parseTime[i]", i, parseTime[i])
-						fmt.Println("after day currentTime[i]", i, currentTime[i])
 						continue
 					}
 				}
 			}
 		}
 
-		fmt.Println("parseTime llll", parseTime)
 		if len(parseTime) > 0 {
-			fmt.Println("parseTime llll", parseTime)
 			t = time.Date(parseTime[5], time.Month(parseTime[4]), parseTime[3], parseTime[2], parseTime[1], parseTime[0], 0, location)
 			currentTime = []int{t.Second(), t.Minute(), t.Hour(), t.Day(), int(t.Month()), t.Year()}
-			fmt.Println("parseTime t", t)
-			fmt.Println("last currentTime: ", currentTime)
-			fmt.Println()
 		}
 	}
 	return

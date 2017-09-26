@@ -123,7 +123,7 @@ func (now *Now) Parse(strs ...string) (t time.Time, err error) {
 	currentLocation := now.Location()
 
 	for _, str := range strs {
-		onlyTime := regexp.MustCompile(`^\s*\d+(:\d+)*\s*$`).MatchString(str)
+		onlyTime := regexp.MustCompile(`^\s*\d+(:\d+)*\s*$`).MatchString(str) // match 15:04:05, 15
 		t, err = parseWithFormat(str)
 		location := t.Location()
 		if location.String() == "UTC" {
@@ -133,10 +133,16 @@ func (now *Now) Parse(strs ...string) (t time.Time, err error) {
 		if err == nil {
 			fmt.Println("t", t)
 			parseTime = []int{t.Second(), t.Minute(), t.Hour(), t.Day(), int(t.Month()), t.Year()}
+			onlyTime = onlyTime && (parseTime[3] == 1) && (parseTime[4] == 1)
 
 			fmt.Println("parseTime", parseTime)
 			fmt.Println("currentTime", currentTime)
 			for i, v := range parseTime {
+				// Don't reset hour, minute, second if it is a time only string
+				if onlyTime && i <= 2 {
+					continue
+				}
+
 				// Fill up missed information with current time
 				if v == 0 {
 					fmt.Println("parseTime[i]", parseTime[i])
@@ -152,10 +158,13 @@ func (now *Now) Parse(strs ...string) (t time.Time, err error) {
 
 				fmt.Println("after first parseTime[i]", parseTime[i])
 				// Default day and month is 1, fill up it if missing it
-				if (i == 3 || i == 4) && onlyTime {
-					parseTime[i] = currentTime[i]
-					fmt.Println("after day parseTime[i]", i, parseTime[i])
-					fmt.Println("after day currentTime[i]", i, currentTime[i])
+				if onlyTime {
+					if i == 3 || i == 4 {
+						parseTime[i] = currentTime[i]
+						fmt.Println("after day parseTime[i]", i, parseTime[i])
+						fmt.Println("after day currentTime[i]", i, currentTime[i])
+						continue
+					}
 				}
 			}
 		}

@@ -1,7 +1,6 @@
 package now
 
 import (
-	"fmt"
 	"testing"
 	"time"
 )
@@ -25,7 +24,6 @@ func TestBeginningOf(t *testing.T) {
 
 	location, _ := time.LoadLocation("Japan")
 	beginningOfDay := time.Date(2015, 05, 01, 0, 0, 0, 0, location)
-	fmt.Println("beee: ", beginningOfDay)
 	if New(beginningOfDay).BeginningOfDay().Format(format) != "2015-05-01 00:00:00" {
 		t.Errorf("BeginningOfDay")
 	}
@@ -42,6 +40,18 @@ func TestBeginningOf(t *testing.T) {
 
 	if New(n).BeginningOfMonth().Format(format) != "2013-11-01 00:00:00" {
 		t.Errorf("BeginningOfMonth")
+	}
+
+	if New(n).BeginningOfQuarter().Format(format) != "2013-10-01 00:00:00" {
+		t.Error("BeginningOfQuarter")
+	}
+
+	if New(n.AddDate(0, -1, 0)).BeginningOfQuarter().Format(format) != "2013-10-01 00:00:00" {
+		t.Error("BeginningOfQuarter")
+	}
+
+	if New(n.AddDate(0, 1, 0)).BeginningOfQuarter().Format(format) != "2013-10-01 00:00:00" {
+		t.Error("BeginningOfQuarter")
 	}
 
 	if New(n).BeginningOfYear().Format(format) != "2013-01-01 00:00:00" {
@@ -76,6 +86,18 @@ func TestEndOf(t *testing.T) {
 
 	if New(n).EndOfMonth().Format(format) != "2013-11-30 23:59:59.999999999" {
 		t.Errorf("EndOfMonth")
+	}
+
+	if New(n).EndOfQuarter().Format(format) != "2013-12-31 23:59:59.999999999" {
+		t.Errorf("EndOfQuarter")
+	}
+
+	if New(n.AddDate(0, -1, 0)).EndOfQuarter().Format(format) != "2013-12-31 23:59:59.999999999" {
+		t.Errorf("EndOfQuarter")
+	}
+
+	if New(n.AddDate(0, 1, 0)).EndOfQuarter().Format(format) != "2013-12-31 23:59:59.999999999" {
+		t.Errorf("EndOfQuarter")
 	}
 
 	if New(n).EndOfYear().Format(format) != "2013-12-31 23:59:59.999999999" {
